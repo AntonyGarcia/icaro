@@ -17,18 +17,14 @@ import java.util.logging.Logger;
  */
 public class Icaro {
 
-    /**
-     * OutputStream para el envío de datos por el Puerto Serie
-     */
+    //OutputStream para el envío de datos por el Puerto Serie
     private static OutputStream Output = null;
-    /**
-     * Variable que representa el Puerto Serie
-     */
+    
+    // Variable que representa el Puerto Serie
     private static SerialPort serialPort;
 
-    /**
-     * Variables con los parámetros por defecto del Puerto Serie.
-     */
+    
+    // Variables con los parámetros por defecto del Puerto Serie.
     private static int ByteSize = 8;
     private static int StopBits = 1;
     private static int Parity = 0;
@@ -62,8 +58,7 @@ public class Icaro {
     }
 
     /**
-     * Método para establecer el ByteSize Se aceptan valores de entrada entre 5
-     * y 8.
+     * Método para establecer el ByteSize Se aceptan valores de entrada entre 5 y 8.
      *
      * @param Bytes Valor tipo entero para establecer el ByteSize
      */
@@ -150,11 +145,14 @@ public class Icaro {
                 serialPort = (SerialPort) portId.open(this.getClass().getName(), TimeOut);
                 serialPort.setSerialPortParams(DATA_RATE, ByteSize, StopBits, Parity);
 
-                //Se establece la variable para enviar los datos a través del Puerto Serie.
+                // Se establece la variable para enviar los datos a través del Puerto Serie.
                 Output = serialPort.getOutputStream();
 
-                //Se establece el valor del flag portOpen como true, indicando que se ha iniciado la conexión
-                //con el puerto Serie
+                /*
+                 Se establece el valor del flag portOpen como true, indicando que se ha iniciado la conexión
+                 con el puerto Serie
+                 */
+
                 portOpen = true;
                 System.out.println("Se ha iniciado la conexión con el Puerto Serie");
             } catch (IOException ex) {
@@ -216,6 +214,32 @@ public class Icaro {
             System.out.println("El valor del sensor solo puede estar entre un rango de 1 a 4.");
         }
     }
+
+    /**
+     * Método encargado de indicar la dirección del 
+     * motor.
+     *
+     * @param Los parametros a ingresar es un entero que significa:
+     * <br> 1 = Adelante
+     * <br> 2 = Atrás
+     * <br> 3 = Izquierda
+     * <br> 4 = Derecha
+     * <br> 5 = Parar    
+     */
+
+    public void Motor(int Valor) {
+        if (portOpen) {
+            sendData("l" + (char) Valor);
+        }
+    }
+
+    /**
+     * Método encargado de manejar los servos de a uno a la vez
+     *
+     * @param Los parametros a inresar son:
+     * <br> Servo = Un entero de 1 a 5.
+     * <br> Valor = Entero de 0 a 255.
+     */
 
     public void ActivarServo(int Servo, int Valor) {
         if (portOpen) {
