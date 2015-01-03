@@ -203,33 +203,42 @@ public class Icaro {
 
     public int LeerValorAnalogico(int Sensor) {
         int Output = 0;
-        return Output;
+
     }
 
-    int LeerValorDigital(int Sensor) {
-        int Output = 0;
-        return Output;
-    }
+    public void LeerValorDigital(int Sensor) {
 
-    boolean ActivarServo(int Servo, int Valor) {
-        if (Servo == 1) {
+        if ((Sensor < 4) && (Sensor > 1)) {
+            sendData("d" + (char) Sensor);
 
-        } else if (Servo == 2) {
-
-        } else if (Servo == 3) {
-
-        } else if (Servo == 4) {
-
-        } else if (Servo == 5) {
-
+            /* Aqui falta codigo */
+        } else {
+            System.out.println("El valor del sensor solo puede estar entre un rango de 1 a 4.");
         }
-        //return frue;
-        return false;
     }
 
-    boolean Sonido(int Audio, int ValorPuerto) {
-//return frue;
-        return false;
+    public void ActivarServo(int Servo, int Valor) {
+        if (portOpen) {
+            sendData("m");
+            if (Servo == 1) {
+                sendData("1");
+            } else if (Servo == 2) {
+                sendData("2");
+            } else if (Servo == 3) {
+                sendData("3");
+            } else if (Servo == 4) {
+                sendData("4");
+            } else if (Servo == 5) {
+                sendData("5" + (char) Valor);
+            }
+        }
+    }
+
+    public Sonido(int Audio, int ValorPuerto) {
+        if (porOpen) {
+            sendData("a" + (char) Audio + (char) ValorPuerto );
+            sendData("s" + (char) 0 ); 
+        }
     }
 
 }
