@@ -19,11 +19,10 @@ public class Icaro {
 
     //OutputStream para el envío de datos por el Puerto Serie
     private static OutputStream Output = null;
-    
+
     // Variable que representa el Puerto Serie
     private static SerialPort serialPort;
 
-    
     // Variables con los parámetros por defecto del Puerto Serie.
     private static int ByteSize = 8;
     private static int StopBits = 1;
@@ -58,7 +57,8 @@ public class Icaro {
     }
 
     /**
-     * Método para establecer el ByteSize Se aceptan valores de entrada entre 5 y 8.
+     * Método para establecer el ByteSize Se aceptan valores de entrada entre 5
+     * y 8.
      *
      * @param Bytes Valor tipo entero para establecer el ByteSize
      */
@@ -152,7 +152,6 @@ public class Icaro {
                  Se establece el valor del flag portOpen como true, indicando que se ha iniciado la conexión
                  con el puerto Serie
                  */
-
                 portOpen = true;
                 System.out.println("Se ha iniciado la conexión con el Puerto Serie");
             } catch (IOException ex) {
@@ -183,6 +182,7 @@ public class Icaro {
         }
     }
 
+    //Método privado para el envío de cadenas de caracteres a través del Puerto Serie
     private void sendData(String inputData) {
         try {
             Output.write(inputData.getBytes());
@@ -191,9 +191,25 @@ public class Icaro {
         }
     }
 
+    /**
+     * La funcion activar envia el caracter -s- al puerto serie para preparar la
+     * Placa Icaro para leer el siguiente caracter (valor) y demultiplexarlo en
+     * sus 8 pines de salida
+     *
+     * @param Valor Debe ser un valor tipo entero, comprendido entre 0 y 255
+     *
+     * @throws Exception Se pueden producir dos tipos de excepciones:
+     * <br> - Si la conexión con el Puerto Serie no se ha iniciado
+     * <br> - Si se introduce como parámetro un número menor a 0 o mayor que 255
+     */
     public void Activar(int Valor) throws Exception {
         if (portOpen) {
-            sendData("s" + (char) Valor);
+            if ((Valor >= 1) && (Valor <= 255)) {
+                sendData("s" + (char) Valor);
+            } else {
+                throw new Exception("El parámetro del parámetro -Valor- debe ser un número entero "
+                        + "entre 0 y 255");
+            }
         } else {
             throw new Exception("La placa no se puede iniciar debido a que no se ha abierto el puerto serie.");
         }
@@ -201,67 +217,102 @@ public class Icaro {
 
     public int LeerValorAnalogico(int Sensor) {
         int Output = 0;
-
+        return Output;
     }
 
-    public void LeerValorDigital(int Sensor) {
+    public void LeerValorDigital(int Sensor) throws Exception {
+        if (portOpen) {
+            if ((Sensor <= 4) && (Sensor >= 1)) {
+                sendData("d" + (char) Sensor);
 
-        if ((Sensor < 4) && (Sensor > 1)) {
-            sendData("d" + (char) Sensor);
-
-            /* Aqui falta codigo */
+                /* Aqui falta codigo */
+            } else {
+                throw new Exception("El valor del parámetro -Sensor- solo puede estar en un rango entre 1 y 4");
+            }
         } else {
-            System.out.println("El valor del sensor solo puede estar entre un rango de 1 a 4.");
+            throw new Exception("No se ha iniciado el puerto serie. Imposible enviar instrucción");
         }
+
     }
 
     /**
-     * Método encargado de indicar la dirección del 
-     * motor.
+     * Método encargado de indicar la dirección del motor.
      *
-     * @param Los parametros a ingresar es un entero que significa:
+     * @param Valor El parámetro a ingresar es un entero, cuyo valor debe estar
+     * entre 1 y 5. Según el valor del entero, las acciones del motor pueden
+     * ser:
      * <br> 1 = Adelante
      * <br> 2 = Atrás
      * <br> 3 = Izquierda
      * <br> 4 = Derecha
-     * <br> 5 = Parar    
+     * <br> 5 = Parar
+     *
+     * @exception Exception Se pueden producir dos tipos de excepciones:
+     * <br> - Si la conexión con el Puerto Serie no se ha iniciado
+     * <br> - Si se introduce como valor del parámetro -Valor- un número menor a
+     * 1 o mayor que 5
      */
-
-    public void Motor(int Valor) {
+    public void Motor(int Valor) throws Exception {
         if (portOpen) {
-            sendData("l" + (char) Valor);
+            if ((Valor >= 1) && (Valor <= 5)) {
+                sendData("l" + (char) Valor);
+            } else {
+                throw new Exception("El parámetro -Valor- debe ser un número entero "
+                        + "entre 1 y 5");
+            }
+
+        } else {
+            throw new Exception("No se ha iniciado el puerto serie. Imposible enviar instrucción");
         }
     }
 
     /**
-     * Método encargado de manejar los servos de a uno a la vez
+     * Método encargado de manejar los servos, uno a la vez
      *
-     * @param Los parametros a inresar son:
-     * <br> Servo = Un entero de 1 a 5.
-     * <br> Valor = Entero de 0 a 255.
+     * @param Servo Un entero entre 1 y 5
+     * @param Valor = Entero entre 0 y 255.
+     * @exception Exception Exception Se pueden producir tres tipos de
+     * excepciones:
+     * <br> - Si la conexión con el Puerto Serie no se ha iniciado
+     * <br> - Si se introduce como valor del parámetro -Servo- un número menor a
+     * 1 o mayor que 5
+     * <br> - Si se introduce como valor del parámetro -Valor- un número menor a
+     * 0 o mayor que 255
      */
-
-    public void ActivarServo(int Servo, int Valor) {
+    public void ActivarServo(int Servo, int Valor) throws Exception {
         if (portOpen) {
-            sendData("m");
-            if (Servo == 1) {
-                sendData("1");
-            } else if (Servo == 2) {
-                sendData("2");
-            } else if (Servo == 3) {
-                sendData("3");
-            } else if (Servo == 4) {
-                sendData("4");
-            } else if (Servo == 5) {
-                sendData("5" + (char) Valor);
+            if ((Servo >= 1) && (Servo <= 5)) {
+
+                if ((Valor >= 1) && (Valor <= 5)) {
+                    sendData("m");
+                    if (Servo == 1) {
+                        sendData("1");
+                    } else if (Servo == 2) {
+                        sendData("2");
+                    } else if (Servo == 3) {
+                        sendData("3");
+                    } else if (Servo == 4) {
+                        sendData("4");
+                    } else if (Servo == 5) {
+                        sendData("5" + (char) Valor);
+                    }
+                } else {
+                    throw new Exception("El valor del parámetro -Valor- solo puede estar en un rango entre 0 y 255");
+                }
+
+            } else {
+                throw new Exception("El valor del parámetro -Servo- solo puede estar en un rango entre 1 y 4");
             }
+
+        } else {
+            throw new Exception("No se ha iniciado el puerto serie. Imposible enviar instrucción");
         }
     }
 
-    public Sonido(int Audio, int ValorPuerto) {
-        if (porOpen) {
-            sendData("a" + (char) Audio + (char) ValorPuerto );
-            sendData("s" + (char) 0 ); 
+    public void Sonido(int Audio, int ValorPuerto) {
+        if (portOpen) {
+            sendData("a" + (char) Audio + (char) ValorPuerto);
+            sendData("s" + (char) 0);
         }
     }
 
