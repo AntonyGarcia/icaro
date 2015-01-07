@@ -255,7 +255,7 @@ public class Icaro {
     public void Motor(int Valor) throws Exception {
         if (portOpen) {
             if ((Valor >= 1) && (Valor <= 5)) {
-                sendData("l" + (char) Valor);
+                sendData("l" + (char) Valor);               
             } else {
                 throw new Exception("El parámetro -Valor- debe ser un número entero "
                         + "entre 1 y 5");
@@ -309,10 +309,19 @@ public class Icaro {
         }
     }
 
-    public void Sonido(int Audio, int ValorPuerto) {
+    public void Sonido(int Audio, int ValorPuerto) throws Exception {
         if (portOpen) {
             sendData("a" + (char) Audio + (char) ValorPuerto);
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Icaro.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             sendData("s" + (char) 0);
+        } else {
+            throw new Exception("No se ha iniciado el puerto serie. Imposible enviar instrucción");
         }
     }
 
