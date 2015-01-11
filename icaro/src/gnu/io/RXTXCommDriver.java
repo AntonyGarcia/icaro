@@ -554,13 +554,17 @@ public class RXTXCommDriver implements CommDriver {
 
                  taj
                  */
+                
                 if (osName.equals("Linux")) {
-                    String[] Temp = {
+                    System.out.println("Hola Kiara. Vamos bien");
+                    
+                    String[] Temp = {   
                         "ttyS", // linux Serial Ports
                         "ttySA", // for the IPAQs
                         "ttyUSB", // for USB frobs
                         "rfcomm", // bluetooth serial device
                         "ttyircomm", // linux IrCommdevices (IrDA serial emu)
+                        "ttyACM"
                     };
                     CandidatePortPrefixes = Temp;
                 } else if (osName.equals("Linux-all-ports")) {
